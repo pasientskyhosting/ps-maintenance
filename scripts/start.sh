@@ -51,6 +51,11 @@ EOF
     cd /var/www/html
     mkdir -p /var/www/html/var
     /usr/bin/composer run-script build-parameters --no-interaction
+
+    if [ -f /var/www/html/bin/console ]; then
+        /var/www/html/bin/console cache:clear --no-warmup --env=prod
+        /var/www/html/bin/console cache:warmup --env=prod
+    fi
 fi
 
 trap : TERM INT; sleep infinity & wait
