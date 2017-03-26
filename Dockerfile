@@ -10,6 +10,7 @@ RUN composer_hash=$(wget -q -O - https://composer.github.io/installer.sig) && \
     && apt-get install -y -q --no-install-recommends \
     wget \
     vim \
+    tmux \
     nano
 
 ADD scripts/start.sh /start.sh
