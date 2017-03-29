@@ -38,7 +38,11 @@ EOF
 cat > /var/www/html/app/config/parameters.yml <<EOF
 parameters:
     consul_uri: $PS_CONSUL_FULL_URL
-    consul_sections: ['parameters/$PS_ENVIRONMENT/common.yml', 'parameters/$PS_ENVIRONMENT/$PS_APPLICATION.yml']
+    consul_sections:
+        - 'parameters/base/common.yml'
+        - 'parameters/base/$PS_APPLICATION.yml'
+        - 'parameters/$PS_ENVIRONMENT/common.yml'
+        - 'parameters/$PS_ENVIRONMENT/$PS_APPLICATION.yml'
     env(PS_ENVIRONMENT): $PS_ENVIRONMENT
     env(PS_APPLICATION): $PS_APPLICATION
     env(PS_BUILD_ID): $PS_BUILD_ID
