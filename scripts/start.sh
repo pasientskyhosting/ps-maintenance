@@ -3,7 +3,7 @@
 # Create a log pipe so non root can write to stdout
 mkfifo -m 600 /tmp/logpipe
 cat <> /tmp/logpipe 1>&2 &
-chown -R nginx:nginx /tmp/logpipe
+
 
 # Disable Strict Host checking for non interactive git clones
 mkdir -p -m 0700 /root/.ssh
@@ -32,7 +32,6 @@ monolog:
             path:  "/tmp/logpipe"
             level: error
 EOF
-
 
     if [ ! -z "$PS_ENVIRONMENT" ]; then
 cat > /var/www/html/app/config/parameters.yml <<EOF
