@@ -16,4 +16,6 @@ RUN composer_hash=$(wget -q -O - https://composer.github.io/installer.sig) && \
 ADD scripts/start.sh /start.sh
 RUN chmod 755 /start.sh
 
+ENV MONO_GC_PARAMS="nursery-size=2g"
+
 CMD ["/start.sh"]
