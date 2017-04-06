@@ -18,4 +18,4 @@ RUN chmod 755 /start.sh
 
 ENV MONO_GC_PARAMS="nursery-size=2g"
 
-CMD ["/start.sh"]
+ENTRYPOINT ["/start.sh"]

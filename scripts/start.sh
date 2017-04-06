@@ -61,4 +61,9 @@ EOF
     fi
 fi
 
-trap : TERM INT; sleep infinity & wait
+if [ -z "$1" ]
+then
+    trap : TERM INT; sleep infinity & wait
+else
+    eval $@
+fi
