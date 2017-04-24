@@ -33,7 +33,9 @@ monolog:
             level: error
 EOF
 
-    if [ ! -z "$PS_ENVIRONMENT" ]; then
+    if [ -z "$PRESERVE_PARAMS" ]; then
+
+        if [ ! -z "$PS_ENVIRONMENT" ]; then
 cat > /var/www/html/app/config/parameters.yml <<EOF
 parameters:
     consul_uri: $PS_CONSUL_FULL_URL
@@ -49,16 +51,18 @@ parameters:
     env(PS_BASE_HOST): $PS_BASE_HOST
     env(NEW_RELIC_API_URL): $NEW_RELIC_API_URL
 EOF
+        fi
+
+        cd /var/www/html
+        mkdir -p /var/www/html/var
+        /usr/bin/composer run-script build-parameters --no-interaction
+
+        if [ -f /var/www/html/bin/console ]; then
+            /var/www/html/bin/console cache:clear --no-warmup --env=prod
+            /var/www/html/bin/console cache:warmup --env=prod
+        fi
     fi
 
-    cd /var/www/html
-    mkdir -p /var/www/html/var
-    /usr/bin/composer run-script build-parameters --no-interaction
-
-    if [ -f /var/www/html/bin/console ]; then
-        /var/www/html/bin/console cache:clear --no-warmup --env=prod
-        /var/www/html/bin/console cache:warmup --env=prod
-    fi
 fi
 
 if [ -z "$1" ]
