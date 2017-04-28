@@ -16,12 +16,13 @@ if [ ! -z "$SSH_KEY" ]; then
     unset SSH_KEY
 fi
 
-if [ -f /var/www/html/app/config/parameters.yml.dist ]; then
-    echo "    k8s_build_id: $PS_BUILD_ID" >> /var/www/html/app/config/parameters.yml.dist
-fi
+if [ -z "$PRESERVE_PARAMS" ]; then
+    if [ -f /var/www/html/app/config/parameters.yml.dist ]; then
+        echo "    k8s_build_id: $PS_BUILD_ID" >> /var/www/html/app/config/parameters.yml.dist
+    fi
 
-# Composer
-if [ -f /var/www/html/composer.json ]; then
+    # Composer
+    if [ -f /var/www/html/composer.json ]; then
 cat > /var/www/html/app/config/config_prod.yml <<EOF
 imports:
     - { resource: config.yml }
@@ -32,8 +33,6 @@ monolog:
             path:  "/tmp/logpipe"
             level: error
 EOF
-
-    if [ -z "$PRESERVE_PARAMS" ]; then
 
         if [ ! -z "$PS_ENVIRONMENT" ]; then
 cat > /var/www/html/app/config/parameters.yml <<EOF
