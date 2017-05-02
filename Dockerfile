@@ -1,4 +1,4 @@
-FROM pasientskyhosting/ps-worker
+FROM pasientskyhosting/ps-worker:mono4.6.2
 MAINTAINER Andreas Krüger <ak@patientsky.com>
 
 RUN composer_hash=$(wget -q -O - https://composer.github.io/installer.sig) && \
