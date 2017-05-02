@@ -13,6 +13,7 @@ RUN composer_hash=$(wget -q -O - https://composer.github.io/installer.sig) && \
     tmux \
     nano
 
+
 ADD scripts/start.sh /start.sh
 RUN chmod 755 /start.sh
 
