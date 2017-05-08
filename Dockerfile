@@ -9,6 +9,7 @@ RUN composer_hash=$(wget -q -O - https://composer.github.io/installer.sig) && \
     apt-get update \
     && apt-get install -y -q --no-install-recommends \
     wget \
+    net-tools \
     vim \
     tmux \
     nano
