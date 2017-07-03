@@ -1,5 +1,12 @@
 #!/bin/bash
 
+function checkForFail() {
+    if [ ! $? -eq 0 ]; then
+        echo "command failed"
+        exit 1
+    fi
+}
+
 # Create a log pipe so non root can write to stdout
 mkfifo -m 600 /tmp/logpipe
 cat <> /tmp/logpipe 1>&2 &
@@ -55,10 +62,13 @@ EOF
         cd /var/www/html
         mkdir -p /var/www/html/var
         /usr/bin/composer run-script build-parameters --no-interaction
+        checkForFail
 
         if [ -f /var/www/html/bin/console ]; then
             /var/www/html/bin/console cache:clear --no-warmup --env=prod
+            checkForFail
             /var/www/html/bin/console cache:warmup --env=prod
+            checkForFail
         fi
     fi
 
