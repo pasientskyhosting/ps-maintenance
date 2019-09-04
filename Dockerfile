@@ -1,32 +1,34 @@
-FROM pasientskyhosting/ps-worker:mono4.8.1
-MAINTAINER Andreas Krüger <ak@patientsky.com>
+FROM pasientskyhosting/nginx-php-fpm:7.1
 
-RUN composer_hash=$(wget -q -O - https://composer.github.io/installer.sig) && \
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php -r "if (hash_file('SHA384', 'composer-setup.php') === '${composer_hash}') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
-    php composer-setup.php --install-dir=/usr/bin --filename=composer && \
-    php -r "unlink('composer-setup.php');" && \
-    apt-get update \
-    && apt-get install -y -q --no-install-recommends \
-    wget \
-    net-tools \
-    vim \
-    tmux \
-    tzdata \
-    locales \
-    localepurge \
-    nano
-
-# Install no locale
-RUN sed -i 's/# nb_NO.UTF-8 UTF-8/nb_NO.UTF-8 UTF-8/' /etc/locale.gen && \
-    ln -s /etc/locale.alias /usr/share/locale/locale.alias && \
-    locale-gen nb_NO.UTF-8
-
-RUN sed -i "s|USE_DPKG|#USE_DPKG|" /etc/locale.nopurge && localepurge
-
-ADD scripts/start.sh /start.sh
-RUN chmod 755 /start.sh
-
+LABEL maintainer "Andreas Krüger <ak@patientsky.com>"
 ENV MONO_GC_PARAMS="nursery-size=1g"
+
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y -q --install-recommends --no-install-suggests \
+      apt-transport-https \
+      dirmngr \
+      gnupg2 \
+      lsb-release \
+      wget \
+      tzdata \
+      curl \
+      apt-utils \
+      net-tools \
+      openssh-client \
+      git \
+      ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/cache/apk/*
+
+COPY --from=pasientskyhosting/ps-mono:6.0-jemalloc /opt/mono /usr/local
+
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
+    && echo "deb https://download.mono-project.com/repo/debian stable-buster/snapshots/6.0 main" > /etc/apt/sources.list.d/mono-official-stable.list \
+    && apt-get update \
+    && apt-get install -y -q --install-recommends --no-install-suggests ca-certificates-mono \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY scripts/start.sh /start.sh
 
 ENTRYPOINT ["/start.sh"]
