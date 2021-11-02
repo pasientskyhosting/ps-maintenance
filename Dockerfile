@@ -72,8 +72,7 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
 
 RUN mkdir -p /var/log/supervisor
 
-#ADD conf/supervisord.conf /etc/supervisord.conf
-COPY --from=pasientskyhosting/ps-worker:mono4.8.1-php7.4 /etc/supervisord.conf /etc/supervisord.conf
+ADD conf/supervisord.conf /etc/supervisord.conf
 
 #RUN useradd -ms /bin/bash worker
 
@@ -108,23 +107,10 @@ RUN echo "opcache.enable=1" >> /etc/php/7.4/cli/conf.d/10-opcache.ini && \
     echo "opcache.revalidate_freq=60" >> /etc/php/7.4/cli/conf.d/10-opcache.ini && \
     echo "extension=amqp.so" >> /etc/php/7.4/cli/php.ini
 
-# Add Scripts
-#ADD scripts/start.sh /start.sh
-COPY --from=pasientskyhosting/ps-worker:mono4.8.1-php7.4 /start.sh /start.sh
-RUN chmod 755 /start.sh
-
 # tweak php-cli and php-fpm config
 RUN sed -i \
     -e "s/memory_limit\s*=.*/memory_limit=12G/g" \
     /etc/php/7.4/cli/php.ini
-
-RUN composer_hash=$(wget -q -O - https://composer.github.io/installer.sig) && \
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php -r "if (hash_file('SHA384', 'composer-setup.php') === '${composer_hash}') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
-    php composer-setup.php --install-dir=/usr/bin --filename=composer && \
-    php -r "unlink('composer-setup.php');"
-
-CMD ["/start.sh"]
 
 RUN composer_hash=$(wget -q -O - https://composer.github.io/installer.sig) && \
     php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
@@ -149,7 +135,9 @@ RUN sed -i 's/# nb_NO.UTF-8 UTF-8/nb_NO.UTF-8 UTF-8/' /etc/locale.gen && \
 
 RUN sed -i "s|USE_DPKG|#USE_DPKG|" /etc/locale.nopurge && localepurge
 
+# Add Scripts
 ADD scripts/start.sh /start.sh
 RUN chmod 755 /start.sh
 
+CMD ["/start.sh"]
 ENTRYPOINT ["/start.sh"]
