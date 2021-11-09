@@ -1,6 +1,6 @@
 FROM debian:stretch-slim
 
-ENV php_conf /etc/php/7.4/cli/php.ini
+ENV php_conf /etc/php/8.0/cli/php.ini
 ENV DEBIAN_FRONTEND noninteractive
 ENV composer_hash 669656bab3166a7aff8a7506b8cb2d1c292f042046c5a994c43155c0be6190fa0355160742ab2e1c88d40d5be660b410
 
@@ -39,22 +39,22 @@ RUN echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | tee /etc/apt/
     wget -O- https://download.newrelic.com/548C16BF.gpg | apt-key add -
 
 RUN apt-get update && apt-get install -y -q --no-install-recommends \
-    php7.4-cli \
-    php7.4-mysql \
-    php7.4-bcmath \
-    php7.4-gd \
-    php7.4-curl \
-    php7.4-json \
-    # php7.4-mcrypt \
-    php7.4-cli \
-    php7.4-apcu \
-    php7.4-imagick \
-    php7.4-intl \
-    php7.4-opcache \
-    php7.4-mongodb \
-    php7.4-mbstring \
-    php7.4-xml \
-    php7.4-zip \
+    php8.0-cli \
+    php8.0-mysql \
+    php8.0-bcmath \
+    php8.0-gd \
+    php8.0-curl \
+    # php8.0-json \
+    # php8.0-mcrypt \
+    php8.0-cli \
+    php8.0-apcu \
+    php8.0-imagick \
+    php8.0-intl \
+    php8.0-opcache \
+    php8.0-mongodb \
+    php8.0-mbstring \
+    php8.0-xml \
+    php8.0-zip \
     php-igbinary \
     net-tools \
     supervisor \
@@ -65,10 +65,10 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
     librabbitmq-dev \
     make \
     php-pear \
-    php7.4-dev \
+    php8.0-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && yes '' | pecl install amqp
+    && yes '' | pecl install amqp-1.11.0RC1
 
 RUN mkdir -p /var/log/supervisor
 
@@ -91,26 +91,26 @@ RUN sed -i \
     ${php_conf}
 
 # Cleanup some files and remove comments
-RUN find /etc/php/7.4/cli/conf.d -name "*.ini" -exec sed -i -re '/^[[:blank:]]*(\/\/|#|;)/d;s/#.*//' {} \; && \
-    find /etc/php/7.4/cli/conf.d -name "*.ini" -exec sed -i -re '/^$/d' {} \;
+RUN find /etc/php/8.0/cli/conf.d -name "*.ini" -exec sed -i -re '/^[[:blank:]]*(\/\/|#|;)/d;s/#.*//' {} \; && \
+    find /etc/php/8.0/cli/conf.d -name "*.ini" -exec sed -i -re '/^$/d' {} \;
 
 # Configure php opcode cache
-RUN echo "opcache.enable=1" >> /etc/php/7.4/cli/conf.d/10-opcache.ini && \
-    echo "opcache.enable_cli=1" >> /etc/php/7.4/cli/conf.d/10-opcache.ini && \
-    echo "opcache.consistency_checks=0" >> /etc/php/7.4/cli/conf.d/10-opcache.ini && \
-    echo "opcache.file_cache_consistency_checks=0" >> /etc/php/7.4/cli/conf.d/10-opcache.ini && \
-    echo "opcache.file_cache=/var/tmp" >> /etc/php/7.4/cli/conf.d/10-opcache.ini && \
-    echo "opcache.validate_timestamps=0" >> /etc/php/7.4/cli/conf.d/10-opcache.ini && \
-    echo "opcache.max_accelerated_files=1000000" >> /etc/php/7.4/cli/conf.d/10-opcache.ini && \
-    echo "opcache.memory_consumption=1024" >> /etc/php/7.4/cli/conf.d/10-opcache.ini && \
-    echo "opcache.interned_strings_buffer=8" >> /etc/php/7.4/cli/conf.d/10-opcache.ini && \
-    echo "opcache.revalidate_freq=60" >> /etc/php/7.4/cli/conf.d/10-opcache.ini && \
-    echo "extension=amqp.so" >> /etc/php/7.4/cli/php.ini
+RUN echo "opcache.enable=1" >> /etc/php/8.0/cli/conf.d/10-opcache.ini && \
+    echo "opcache.enable_cli=1" >> /etc/php/8.0/cli/conf.d/10-opcache.ini && \
+    echo "opcache.consistency_checks=0" >> /etc/php/8.0/cli/conf.d/10-opcache.ini && \
+    echo "opcache.file_cache_consistency_checks=0" >> /etc/php/8.0/cli/conf.d/10-opcache.ini && \
+    echo "opcache.file_cache=/var/tmp" >> /etc/php/8.0/cli/conf.d/10-opcache.ini && \
+    echo "opcache.validate_timestamps=0" >> /etc/php/8.0/cli/conf.d/10-opcache.ini && \
+    echo "opcache.max_accelerated_files=1000000" >> /etc/php/8.0/cli/conf.d/10-opcache.ini && \
+    echo "opcache.memory_consumption=1024" >> /etc/php/8.0/cli/conf.d/10-opcache.ini && \
+    echo "opcache.interned_strings_buffer=8" >> /etc/php/8.0/cli/conf.d/10-opcache.ini && \
+    echo "opcache.revalidate_freq=60" >> /etc/php/8.0/cli/conf.d/10-opcache.ini && \
+    echo "extension=amqp.so" >> /etc/php/8.0/cli/php.ini
 
 # tweak php-cli and php-fpm config
 RUN sed -i \
     -e "s/memory_limit\s*=.*/memory_limit=12G/g" \
-    /etc/php/7.4/cli/php.ini
+    /etc/php/8.0/cli/php.ini
 
 RUN composer_hash=$(wget -q -O - https://composer.github.io/installer.sig) && \
     php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
