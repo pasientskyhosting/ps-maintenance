@@ -24,13 +24,13 @@ if [ ! -z "$SSH_KEY" ]; then
 fi
 
 if [ -z "$PRESERVE_PARAMS" ]; then
-    if [ -f /var/www/html/app/config/parameters.yml.dist ]; then
-        echo "    k8s_build_id: $PS_BUILD_ID" >> /var/www/html/app/config/parameters.yml.dist
+    if [ -f /var/www/html/config/parameters.yml.dist ]; then
+        echo "    k8s_build_id: $PS_BUILD_ID" >> /var/www/html/config/parameters.yml.dist
     fi
 
     # Composer
     if [ -f /var/www/html/composer.json ]; then
-cat > /var/www/html/app/config/config_prod.yml <<EOF
+cat > /var/www/html/config/config_prod.yml <<EOF
 imports:
     - { resource: config.yml }
 monolog:
@@ -42,7 +42,7 @@ monolog:
 EOF
 
         if [ ! -z "$PS_ENVIRONMENT" ]; then
-cat > /var/www/html/app/config/parameters.yml <<EOF
+cat > /var/www/html/config/parameters.yml <<EOF
 parameters:
     consul_uri: $PS_CONSUL_FULL_URL
     consul_sections:
