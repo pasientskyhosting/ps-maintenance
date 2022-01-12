@@ -54,7 +54,7 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
     php7.1-mbstring \
     php7.1-xml \
     php7.1-zip \
-    php-igbinary \
+    php7.1-igbinary \
     net-tools \
     supervisor \
     openssh-client \
