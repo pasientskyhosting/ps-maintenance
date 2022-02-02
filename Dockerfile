@@ -55,7 +55,7 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
     php8.0-mbstring \
     php8.0-xml \
     php8.0-zip \
-    php-igbinary \
+    php8.0-igbinary \
     net-tools \
     supervisor \
     openssh-client \
