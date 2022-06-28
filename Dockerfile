@@ -2,7 +2,7 @@ FROM debian:stretch-slim
 
 ENV php_conf /etc/php/8.0/cli/php.ini
 ENV DEBIAN_FRONTEND noninteractive
-ENV composer_hash 669656bab3166a7aff8a7506b8cb2d1c292f042046c5a994c43155c0be6190fa0355160742ab2e1c88d40d5be660b410
+ENV composer_hash 55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae
 
 RUN apt-get update && apt-get install -y -q --no-install-recommends \
     apt-transport-https \
@@ -115,7 +115,7 @@ RUN sed -i \
 RUN composer_hash=$(wget -q -O - https://composer.github.io/installer.sig) && \
     php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php -r "if (hash_file('SHA384', 'composer-setup.php') === '${composer_hash}') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
-    php composer-setup.php --install-dir=/usr/bin --filename=composer && \
+    php composer-setup.php --install-dir=/usr/bin --filename=composer --version=2.3.7 \
     php -r "unlink('composer-setup.php');" && \
     apt-get update \
     && apt-get install -y -q --no-install-recommends \
